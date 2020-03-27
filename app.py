@@ -9,16 +9,17 @@ import os
 cwd = os.getcwd()
 path = cwd + '/model'
 
+
 #Initializing the FLASK API
 app = Flask(__name__)
 
 #Loading the saved model using fastai's load_learner method
-model = load_learner(path, 'model.pkl')
+model = load_learner(path, 'export.pkl')
 
 #Defining the home page for the web service
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('myindex.html')
 
 #Writing api for inference using the loaded model
 @app.route('/predict',methods=['POST'])
@@ -29,35 +30,48 @@ def predict():
     
     try:
     	#all the input labels . We had only trained the model using these selected features.
-        labels = ['Brand', 'Location', 'Year', 'Kilometers_Driven', 'Fuel_Type','Transmission', 'Owner_Type', 'Mileage']
         
-        #Collecting values from the html form and converting into respective types as expected by the model
-        Brand =  request.form["Brand"]
-        Location =  request.form["Location"]
-        Year = int(request.form["Year"])
-        KMD =  int(request.form["Kilometers_Driven"])
-        Fuel_type = request.form["Fuel_Type"]
-        Transmission = request.form['Transmission']
-        Owner_Type =  request.form["Owner_Type"]
-        Mileage = float(request.form["Mileage"])
+        labels = ['age', 'sex', 'cough', 'fever', 'chills', 'sore_throat', 'headache', 'fatigue']
 
+        #Collecting values from the html form and converting into respective types as expected by the model
+        Age =  int(request.form["age"])
+        Sex =  request.form["sex"]
+        Cough = request.form["cough"]
+        Fever =  request.form["fever"]
+        Chills = request.form["chills"]
+        Sore_throat = request.form["sore_throat"]
+        Headache =  request.form["headache"]
+        Fatigue = request.form["fatigue"]
+
+
+        # Age =  22
+        # Sex =  'male'
+        # Cough = 'Yes'
+        # Fever =  'Yes'
+        # Chills = 'Yes'
+        # Sore_throat = 'No'
+        # Headache =  'No'
+        # Fatigue = 'Yes'
         #making a list of the collected features
-        features = [Brand , Location , Year, KMD, Fuel_type, Transmission, Owner_Type, Mileage]
+        features = [Age, Sex, Cough, Fever,Chills, Sore_throat, Headache, Fatigue]
 
         #fastai predicts from a pandas series. so converting the list to a series
         to_predict = pd.Series(features, index = labels)
 
         #Getting the prediction from the model and rounding the float into 2 decimal places
-        prediction = round(float(model.predict(to_predict)[1]),2)
+        prediction = int(round(float(model.predict(to_predict)[1]),0))
 
+        
         # Making all predictions below 0 lakhs and above 200 lakhs as invalid
-        if prediction > 0 and prediction <= 200:
-            return render_template('index.html', prediction_text='Your Input : {} Resale Cost: {} Lakh Rupees'.format(features,prediction))
+        if features[2:] == ['No','No','No','No','No','No']:
+            return render_template('myindex.html', prediction_text= f"You don't show any discernable symptoms")
+        elif prediction != 0:
+            return render_template('myindex.html', prediction_text= f'Please wait for {prediction} days before you see a medical professional')
         else:
-            return render_template('index.html', prediction_text='Invalid Prediction !! Network Unable To Predict For The Given Inputs')
+            return render_template('myindex.html', prediction_text='You may need immediate assistance')
 
-    except:
-        return render_template('index.html', prediction_text='Prediction Err !!!')
+    except Exception as e:
+        return render_template('myindex.html', prediction_text= f'your input {features} is invalid')
 
 if __name__ == "__main__":
     app.run(debug=True)
