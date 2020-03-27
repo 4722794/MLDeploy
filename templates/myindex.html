@@ -20,9 +20,10 @@ body, html {height: 100% }
 form{ color:white;}
 </style>
 
-<body style="background-image: url('https://images.unsplash.com/photo-1485291571150-772bcfc10da5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2900&q=80'); background-size: cover; margin-left: 5%; border:1px solid black;">
+<body style="background-image: url('https://www2.deloitte.com/content/dam/insights/us/articles/6677_covid-19/images/6677_banner1.jpg/_jcr_content/renditions/cq5dam.web.1440.660.jpeg'); background-size: cover; margin-left: 5%;">
  <div class="login">
-  <h1>Enter your symptoms to see how urgently you need care</h1>
+  <h1 align = "center">How urgently do you need care? 🏥</h1>
+  <!-- <h2 align ="center"> Let AI help you decide 🤖 </h2> -->
 
     <div class="Variables">
     <form action="{{ url_for('predict')}}"method="post">
@@ -100,7 +101,7 @@ form{ color:white;}
 
    <br>
    <br>
-   {{ prediction_text }}
+   <h2 align="center">{{ prediction_text }}</h2>
 
   </div>
 

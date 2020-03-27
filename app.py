@@ -64,11 +64,14 @@ def predict():
         
         # Making all predictions below 0 lakhs and above 200 lakhs as invalid
         if features[2:] == ['No','No','No','No','No','No']:
-            return render_template('myindex.html', prediction_text= f"You don't show any discernable symptoms")
+            return render_template('myindex.html', prediction_text= f"You don't show any discernable symptoms but continue social distancing! ")
         elif prediction != 0:
-            return render_template('myindex.html', prediction_text= f'Please wait for {prediction} days before you see a medical professional')
+            if prediction == 1:
+                return render_template('myindex.html', prediction_text= f'Please wait for {prediction} day before you see a medical professional')
+            else:
+                return render_template('myindex.html', prediction_text= f'Please wait for {prediction} days before you see a medical professional')
         else:
-            return render_template('myindex.html', prediction_text='You may need immediate assistance')
+            return render_template('myindex.html', prediction_text='You may need immediate assistance, please reach out to a medical professional ASAP')
 
     except Exception as e:
         return render_template('myindex.html', prediction_text= f'your input {features} is invalid')
